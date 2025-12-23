@@ -3,12 +3,8 @@ import { userService } from '../services/user.service';
 
 export const createUser = async (req: Request, res: Response) => {
   try {
+    // Validation is handled by middleware, req.body is already validated
     const { name, surname, email, age } = req.body;
-    if (!name || !surname || !email) {
-      return res
-        .status(400)
-        .json({ message: 'name, surname and email are required' });
-    }
     const created = await userService.create({ name, surname, email, age });
     return res.status(201).json(created);
   } catch {
@@ -22,10 +18,8 @@ export const getUsers = async (_req: Request, res: Response) => {
 };
 
 export const getUserById = async (req: Request, res: Response) => {
+  // Validation is handled by middleware, req.params.id is already validated
   const id = Number(req.params.id);
-  if (Number.isNaN(id)) {
-    return res.status(400).json({ message: 'Invalid id' });
-  }
   const user = await userService.getById(id);
   if (!user) {
     return res.status(404).json({ message: 'User not found' });
@@ -34,10 +28,8 @@ export const getUserById = async (req: Request, res: Response) => {
 };
 
 export const updateUser = async (req: Request, res: Response) => {
+  // Validation is handled by middleware
   const id = Number(req.params.id);
-  if (Number.isNaN(id)) {
-    return res.status(400).json({ message: 'Invalid id' });
-  }
   const updates = req.body;
   const updated = await userService.update(id, updates);
   if (!updated) {
@@ -47,10 +39,8 @@ export const updateUser = async (req: Request, res: Response) => {
 };
 
 export const deleteUser = async (req: Request, res: Response) => {
+  // Validation is handled by middleware
   const id = Number(req.params.id);
-  if (Number.isNaN(id)) {
-    return res.status(400).json({ message: 'Invalid id' });
-  }
   const ok = await userService.remove(id);
   if (!ok) {
     return res.status(404).json({ message: 'User not found' });
