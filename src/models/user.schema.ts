@@ -5,11 +5,11 @@ import { z } from 'zod';
  * Validates: name, surname, email (required), age (optional)
  */
 export const createUserSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
+  name: z.string().min(1, 'Name is required').max(50, 'Name is too long'),
   surname: z
     .string()
     .min(1, 'Surname is required')
-    .max(100, 'Surname is too long'),
+    .max(50, 'Surname is too long'),
   email: z.string().email('Invalid email address'),
   age: z.number().int().positive().optional(),
 });
@@ -22,12 +22,12 @@ export const updateUserSchema = z.object({
   name: z
     .string()
     .min(1, 'Name is required')
-    .max(100, 'Name is too long')
+    .max(50, 'Name is too long')
     .optional(),
   surname: z
     .string()
     .min(1, 'Surname is required')
-    .max(100, 'Surname is too long')
+    .max(50, 'Surname is too long')
     .optional(),
   email: z.string().email('Invalid email address').optional(),
   age: z.number().int().positive().optional(),
