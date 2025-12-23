@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import userRoutes from './routes/user.routes';
+import teacherRoutes from './routes/teacher.routes';
+import classRoutes from './routes/class.routes';
 
 dotenv.config();
 
@@ -14,6 +16,8 @@ app.get('/', (_req, res) => {
 });
 
 app.use('/api', userRoutes);
+app.use('/api', teacherRoutes);
+app.use('/api', classRoutes);
 
 app.listen(port, () => {
   console.log(`Server listening on http://localhost:${port}`);
