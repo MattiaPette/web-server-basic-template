@@ -34,6 +34,7 @@ module.exports = [
         'error',
         { argsIgnorePattern: '^_' },
       ],
+      curly: 'error',
       'no-unused-vars': 'off',
       'no-console': 'off', // Allow console in backend
     },
