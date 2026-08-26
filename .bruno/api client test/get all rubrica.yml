@@ -1,0 +1,14 @@
+info:
+  name: get all rubrica
+  type: http
+
+http:
+  method: GET
+  url: http://localhost:5555/api/rubrica
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

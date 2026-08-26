@@ -1,0 +1,14 @@
+info:
+  name: get single rubrica record
+  type: http
+
+http:
+  method: GET
+  url: http://localhost:5555/api/rubrica/1
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

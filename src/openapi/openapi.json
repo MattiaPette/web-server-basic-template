@@ -1,0 +1,1167 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Web Server Basic Template API",
+    "version": "1.0.0",
+    "description": "API di esempio per un server Express con validazione Zod. Risorse: users, teachers, classes, rubrica. I dati sono in memoria: lo stato si azzera a ogni riavvio del server.",
+    "contact": {
+      "name": "Web Server Basic Template"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Server di sviluppo locale"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Users",
+      "description": "Gestione utenti"
+    },
+    {
+      "name": "Teachers",
+      "description": "Gestione insegnanti"
+    },
+    {
+      "name": "Classes",
+      "description": "Gestione classi"
+    },
+    {
+      "name": "Rubrica",
+      "description": "Gestione rubrica contatti"
+    }
+  ],
+  "paths": {
+    "/api/users": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Create a user",
+        "description": "Crea un nuovo utente. Tutti i campi tranne age sono obbligatori.",
+        "operationId": "createUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Utente creato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Errore interno del server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Users"],
+        "summary": "List all users",
+        "description": "Restituisce la lista completa degli utenti.",
+        "operationId": "getUsers",
+        "responses": {
+          "200": {
+            "description": "Lista degli utenti",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get a user by id",
+        "description": "Restituisce un singolo utente identificato dal suo id numerico.",
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Utente trovato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Utente non trovato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update a user",
+        "description": "Aggiorna parzialmente un utente. Tutti i campi del body sono opzionali.",
+        "operationId": "updateUser",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Utente aggiornato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Utente non trovato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete a user",
+        "description": "Elimina un utente identificato dal suo id numerico.",
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Utente eliminato, nessun contenuto"
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Utente non trovato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/teachers": {
+      "post": {
+        "tags": ["Teachers"],
+        "summary": "Create a teacher",
+        "description": "Crea un nuovo insegnante. yearsOfExperience è opzionale.",
+        "operationId": "createTeacher",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTeacherInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Insegnante creato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Teacher"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Errore interno del server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Teachers"],
+        "summary": "List all teachers",
+        "description": "Restituisce la lista completa degli insegnanti.",
+        "operationId": "getTeachers",
+        "responses": {
+          "200": {
+            "description": "Lista degli insegnanti",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Teacher"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/teachers/{id}": {
+      "get": {
+        "tags": ["Teachers"],
+        "summary": "Get a teacher by id",
+        "description": "Restituisce un singolo insegnante identificato dal suo id numerico.",
+        "operationId": "getTeacherById",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Insegnante trovato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Teacher"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Insegnante non trovato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Teachers"],
+        "summary": "Update a teacher",
+        "description": "Aggiorna parzialmente un insegnante. Tutti i campi del body sono opzionali.",
+        "operationId": "updateTeacher",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTeacherInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Insegnante aggiornato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Teacher"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Insegnante non trovato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Teachers"],
+        "summary": "Delete a teacher",
+        "description": "Elimina un insegnante identificato dal suo id numerico.",
+        "operationId": "deleteTeacher",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Insegnante eliminato, nessun contenuto"
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Insegnante non trovato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/classes": {
+      "post": {
+        "tags": ["Classes"],
+        "summary": "Create a class",
+        "description": "Crea una nuova classe. Tutti i campi sono obbligatori.",
+        "operationId": "createClass",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateClassInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Classe creata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Class"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Errore interno del server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Classes"],
+        "summary": "List all classes",
+        "description": "Restituisce la lista completa delle classi.",
+        "operationId": "getClasses",
+        "responses": {
+          "200": {
+            "description": "Lista delle classi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Class"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/classes/{id}": {
+      "get": {
+        "tags": ["Classes"],
+        "summary": "Get a class by id",
+        "description": "Restituisce una singola classe identificata dal suo id numerico.",
+        "operationId": "getClassById",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Classe trovata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Class"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Classe non trovata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Classes"],
+        "summary": "Update a class",
+        "description": "Aggiorna parzialmente una classe. Tutti i campi del body sono opzionali.",
+        "operationId": "updateClass",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateClassInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Classe aggiornata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Class"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Classe non trovata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Classes"],
+        "summary": "Delete a class",
+        "description": "Elimina una classe identificata dal suo id numerico.",
+        "operationId": "deleteClass",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Classe eliminata, nessun contenuto"
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Classe non trovata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rubrica": {
+      "get": {
+        "tags": ["Rubrica"],
+        "summary": "List all contacts",
+        "description": "Restituisce la lista completa dei contatti della rubrica.",
+        "operationId": "getRubrica",
+        "responses": {
+          "200": {
+            "description": "Lista dei contatti",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Rubrica"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Rubrica"],
+        "summary": "Create a contact",
+        "description": "Aggiunge un nuovo contatto alla rubrica. Tutti i campi sono obbligatori.",
+        "operationId": "createRubrica",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRubricaInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Contatto creato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rubrica"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rubrica/search": {
+      "get": {
+        "tags": ["Rubrica"],
+        "summary": "Search a contact by email",
+        "description": "Cerca un contatto nella rubrica in base all'email. Se nessun contatto corrisponde restituisce un oggetto vuoto.",
+        "operationId": "searchRubrica",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "description": "Email del contatto da cercare",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Contatto trovato (o oggetto vuoto se assente)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Rubrica"
+                    },
+                    {
+                      "type": "object",
+                      "example": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rubrica/{id}": {
+      "get": {
+        "tags": ["Rubrica"],
+        "summary": "Get a contact by id",
+        "description": "Restituisce un singolo contatto della rubrica identificato dal suo id numerico.",
+        "operationId": "getRubricaById",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Contatto trovato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rubrica"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Contatto non trovato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "IdPath": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Identificativo numerico della risorsa",
+        "schema": {
+          "type": "string",
+          "pattern": "^\\d+$"
+        }
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "description": "Utente restituito dalle API",
+        "required": ["id", "name", "surname", "email"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Identificativo univoco",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Mario"
+          },
+          "surname": {
+            "type": "string",
+            "example": "Rossi"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "mario.rossi@example.com"
+          },
+          "age": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 30
+          }
+        }
+      },
+      "CreateUserInput": {
+        "type": "object",
+        "description": "Payload per la creazione di un utente",
+        "required": ["name", "surname", "email"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "Mario"
+          },
+          "surname": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "Rossi"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "mario.rossi@example.com"
+          },
+          "age": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 30
+          }
+        }
+      },
+      "UpdateUserInput": {
+        "type": "object",
+        "description": "Payload per l'aggiornamento di un utente. Tutti i campi sono opzionali.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "Mario"
+          },
+          "surname": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "Rossi"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "mario.rossi@example.com"
+          },
+          "age": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 30
+          }
+        }
+      },
+      "Teacher": {
+        "type": "object",
+        "description": "Insegnante restituito dalle API",
+        "required": ["id", "name", "surname", "email", "subject"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Identificativo univoco",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Anna"
+          },
+          "surname": {
+            "type": "string",
+            "example": "Verdi"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "anna.verdi@example.com"
+          },
+          "subject": {
+            "type": "string",
+            "example": "Matematica"
+          },
+          "yearsOfExperience": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 12
+          }
+        }
+      },
+      "CreateTeacherInput": {
+        "type": "object",
+        "description": "Payload per la creazione di un insegnante",
+        "required": ["name", "surname", "email", "subject"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "Anna"
+          },
+          "surname": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "Verdi"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "anna.verdi@example.com"
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "Matematica"
+          },
+          "yearsOfExperience": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 12
+          }
+        }
+      },
+      "UpdateTeacherInput": {
+        "type": "object",
+        "description": "Payload per l'aggiornamento di un insegnante. Tutti i campi sono opzionali.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "Anna"
+          },
+          "surname": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "Verdi"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "anna.verdi@example.com"
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "Matematica"
+          },
+          "yearsOfExperience": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 12
+          }
+        }
+      },
+      "Class": {
+        "type": "object",
+        "description": "Classe restituita dalle API",
+        "required": ["id", "name", "roomNumber", "capacity"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Identificativo univoco",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "3A"
+          },
+          "roomNumber": {
+            "type": "string",
+            "example": "A101"
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "example": 25
+          }
+        }
+      },
+      "CreateClassInput": {
+        "type": "object",
+        "description": "Payload per la creazione di una classe",
+        "required": ["name", "roomNumber", "capacity"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "3A"
+          },
+          "roomNumber": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20,
+            "example": "A101"
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "example": 25
+          }
+        }
+      },
+      "UpdateClassInput": {
+        "type": "object",
+        "description": "Payload per l'aggiornamento di una classe. Tutti i campi sono opzionali.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "3A"
+          },
+          "roomNumber": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20,
+            "example": "A101"
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "example": 25
+          }
+        }
+      },
+      "Rubrica": {
+        "type": "object",
+        "description": "Contatto della rubrica restituito dalle API",
+        "required": ["id", "name", "surname", "email", "telephone"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Identificativo univoco",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Mario"
+          },
+          "surname": {
+            "type": "string",
+            "example": "Rossi"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "mario.rossi@example.com"
+          },
+          "telephone": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 10,
+            "example": "1234567890"
+          }
+        }
+      },
+      "CreateRubricaInput": {
+        "type": "object",
+        "description": "Payload per l'aggiunta di un contatto in rubrica",
+        "required": ["name", "surname", "email", "telephone"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "Mario"
+          },
+          "surname": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "Rossi"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "mario.rossi@example.com"
+          },
+          "telephone": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 10,
+            "example": "1234567890"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Risposta di errore standard",
+        "required": ["message"],
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Validation failed"
+          },
+          "errors": {
+            "type": "array",
+            "description": "Dettagli degli errori di validazione (presenti solo con status 400)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "example": "email"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Invalid email address"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
