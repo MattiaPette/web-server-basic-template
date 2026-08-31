@@ -791,6 +791,95 @@
             }
           }
         }
+      },
+      "put": {
+        "tags": ["Rubrica"],
+        "summary": "Update a contact",
+        "description": "Aggiorna parzialmente un contatto della rubrica. Tutti i campi del body sono opzionali.",
+        "operationId": "updateRubrica",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRubricaInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Contatto aggiornato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rubrica"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Contatto non trovato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Rubrica"],
+        "summary": "Delete a contact",
+        "description": "Elimina un contatto della rubrica identificato dal suo id numerico.",
+        "operationId": "deleteRubrica",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Contatto eliminato, nessun contenuto"
+          },
+          "400": {
+            "description": "Validazione fallita",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Contatto non trovato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -1108,6 +1197,35 @@
         "type": "object",
         "description": "Payload per l'aggiunta di un contatto in rubrica",
         "required": ["name", "surname", "email", "telephone"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "Mario"
+          },
+          "surname": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "Rossi"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "mario.rossi@example.com"
+          },
+          "telephone": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 10,
+            "example": "1234567890"
+          }
+        }
+      },
+      "UpdateRubricaInput": {
+        "type": "object",
+        "description": "Payload per l'aggiornamento di un contatto. Tutti i campi sono opzionali.",
         "properties": {
           "name": {
             "type": "string",

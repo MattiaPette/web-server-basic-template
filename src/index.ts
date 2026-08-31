@@ -2,9 +2,9 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
-// import userRoutes from './routes/user.routes';
-// import teacherRoutes from './routes/teacher.routes';
-// import classRoutes from './routes/class.routes';
+import userRoutes from './routes/user.routes';
+import teacherRoutes from './routes/teacher.routes';
+import classRoutes from './routes/class.routes';
 import rubricaRoutes from './routes/rubrica.routes';
 import { getOpenApiSpec } from './openapi';
 
@@ -20,9 +20,9 @@ app.get('/', (_req, res) => {
   res.send('Hello from TypeScript!');
 });
 
-// app.use('/api', userRoutes);
-// app.use('/api', teacherRoutes);
-// app.use('/api', classRoutes);
+app.use('/api', userRoutes);
+app.use('/api', teacherRoutes);
+app.use('/api', classRoutes);
 app.use('/api', rubricaRoutes);
 
 const openapiSpec = getOpenApiSpec();
